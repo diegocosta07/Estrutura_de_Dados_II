@@ -13,13 +13,6 @@ typedef struct arvno
 	struct arvno* dir;
 } ArvNo;
 
-//No com info tipo int(para questão 4)
-typedef struct arvnoint
-{
-	char info;
-	struct arvno* esq;
-	struct arvno* dir;
-} ArvNoInt;
 
 typedef struct arv
 {
@@ -34,14 +27,6 @@ ArvNo* arv_criaNo(char c, ArvNo* esq, ArvNo* dir) {
 	return p;
 }
 
-//Criar no tipo int
-ArvNo* arv_criaNoInt(int c, ArvNo* esq, ArvNo* dir) {
-	ArvNo* p = (ArvNo*) malloc(sizeof(ArvNo));
-	p->info = c;
-	p->esq = esq;
-	p->dir = dir;
-	return p;
-}
 
 Arv* arv_cria(ArvNo* r) {
 	Arv* a = (Arv*) malloc(sizeof(Arv));
@@ -79,66 +64,60 @@ void largura(ArvNo* r) {
 	clearQueue(&fila);
 }
 
+//Impressão agradável
 
-int tamanho(ArvNo* p) {
-	if(p != NULL) {
-		tam++;
-		tamanho(p->esq);
-		tamanho(p->dir);
-	}
-	return tam;
+void padding(char ch, int n) {
+	int i;
+	for(i = 0; i<n; i++)
+		putchar(ch);
 }
 
-ArvNo* busca(ArvNo* raiz, char c) {
-	ArvNo* i;
-	for(i = raiz; i!=NULL; i=i->esq) {
-		if (i->info == c){
-			return i;
-		}
-	} 
-	for(i = raiz; i!=NULL; i=i->dir) {
-		if (i->info == c){
-			return i;
-		}
-	} 
-	return NULL;
+void printfArvPritty(ArvNo* raiz, int level) {
+	int i;
+	if (raiz == NULL) {
+		padding('\t', level);
+		puts(" ");
+	} else {
+		printfArvPritty(raiz->dir, level+1);
+		padding('\t', level);
+		printf("%c\n", raiz->info);
+		printfArvPritty(raiz->esq, level+1);
+	}
 }
 
-int altura(ArvNo* raiz) {
-	ArvNo* i;
-	int alt1, alt2;
-	alt1 = alt2 = 0;
-	for(i = raiz; i!=NULL; i=i->esq) {
-		alt1++;
-	} 
-	for(i = raiz; i!=NULL; i=i->dir) {
-		alt2++;
+//constroi a partir da string
+int operador(char c) {
+	switch(c) {
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+		case '^':
+			return 1;
 	}
-	if(alt1 > alt2)
-		return alt1;
+	return 0;
+}
+
+ArvNo* constroi(char* pre, int* i) {
+	char c;
+	ArvNo *p;
+
+	c = pre[(*i)++]; /*lê e avança*/
+
+	printf("c: %c\n", c);
+
+	p = malloc(sizeof(ArvNo));
+	p->info = c;
+
+	if(operador(c)) {
+		p->esq = constroi(pre, i);
+		p->dir = constroi(pre, i);
+	}
 	else
-		return alt2;
+		p->esq = p->dir = NULL;
+	return p;
 }
 
-void minmax(ArvNo* raiz, int* min, int* max){
-	*min = *max = raiz->info;
-	ArvNo* i;
-
-	for(i = raiz->esq; i!=NULL; i=i->esq) {
-		if (i->info < *min){
-			*min = i->info;
-		} else if (i->info > *max) {
-			*max = i->info;
-		}
-	} 
-	for(i = raiz->dir; i!=NULL; i=i->dir) {
-		if (i->info < *min){
-			*min = i->info;
-		} else if (i->info > *max) {
-			*max = i->info;
-		}
-	} 
-}
 
 int main() {
 	Arv* arvore = arv_cria(
@@ -151,38 +130,16 @@ int main() {
 														arv_criaNo('H', NULL, NULL)), NULL)
 										)
 							);
-
-	int min, max;
-	Arv* arvoreInt = arv_cria(
-							arv_criaNoInt(0,
-										arv_criaNoInt(1,
-											 arv_criaNoInt(2, NULL, NULL),
-											 arv_criaNoInt(3, arv_criaNoInt(4, NULL, NULL), NULL)),
-										arv_criaNoInt(5,
-												arv_criaNoInt(6, NULL,
-														arv_criaNoInt(7, NULL, NULL)), NULL)
-										)
-							);
 	//imprime_arv(arvore);
-	printf("\n");
 	//largura(arvore->raiz);
 
-	//QUESTAO 1
-	printf("QUESTAO 1\nQuantidade de nos da arvore %d\n",tamanho(arvore->raiz));
+	int i=0;
+	ArvNo* raiz;
+	char pre[20] = "*+ab/cd";
+	raiz = constroi(pre,&i);
+	printfArvPritty(arvore->raiz, 0);
 
-	//QUESTAO 2
-	if(busca(arvore->raiz, 'D') != NULL)
-		printf("QUESTAO 2\nNo encontrado!\n");
-	else
-		printf("QUESTAO 2\nNo nao encontrado\n");
-
-	//QUESTAO 3
-	printf("QUESTAO 3\nAltura da arvore %d\n",altura(arvore->raiz)+1);
-
-	//QUESTAO 4
-	minmax(arvoreInt->raiz,&min,&max);
-	printf("QUESTAO 4\nMenor valor da arvore eh %d\n",min);
-	printf("Maior valor da arvore eh %d\n",max);
+	printf("\n");
 
 	return 0;
 }
