@@ -1,42 +1,44 @@
-#include <stdlib.h>
-#include <assert.h>
-
 #include "stack.h"
-void stack_new(stack *s, int elementSize, freeFunction freeFn)
-{
-  s->list = malloc(sizeof(list));
-  // make sure the malloc call didn't fail...
-  assert(s->list != NULL);
- 
-  list_new(s->list, elementSize, freeFn);
+#include <stdlib.h>
+#include <stdio.h>
+Pilha* pilha_cria(){
+    Pilha* p = (Pilha*) malloc(sizeof(Pilha));
+    p->prim = NULL;
+    return p;
 }
- 
-void stack_destroy(stack *s)
-{
-  list_destroy(s->list);
-  free(s->list);
+void pilha_push(Pilha* p, ArvNo* v){
+    Lista* n = (Lista*) malloc(sizeof(Lista));
+    n->info = v;
+    n->prox = p->prim;
+    p->prim = n;
 }
- 
-void stack_push(stack *s, void *element)
-{
-  list_prepend(s->list, element);
+ArvNo* pilha_pop(Pilha* p){
+    Lista* t;
+    ArvNo* v;
+    if(pilha_vazia(p)){
+        printf("Pilha vazia.\n");
+        exit(1);
+    }
+    t = p->prim;
+    v = t->info;
+    p->prim = t->prox;
+    free(t);
+    return v;
 }
- 
-void stack_pop(stack *s, void *element)
-{
-  // don't pop an empty stack!
-  assert(stack_size(s) > 0);
-
-  list_head(s->list, element, TRUE);
+int pilha_vazia(Pilha* p){
+    return (p->prim==NULL);
 }
- 
-void stack_peek(stack *s, void *element)
-{
-  assert(stack_size(s) > 0);
-  list_head(s->list, element, FALSE);
+void pilha_libera(Pilha* p){
+    Lista* q = p->prim;
+    while(q!=NULL){
+        Lista* t = q->prox;
+        free(q);
+        q = t;
+    }
+    free(p);
 }
- 
-int stack_size(stack *s)
-{
-  return list_size(s->list);
+void pilha_imprime(Pilha* p){
+    Lista* q;
+    for(q=p->prim; q!=NULL; q=q->prox)
+        printf("%d\n",q->info->info);
 }

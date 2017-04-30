@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queue.h"
-#include "arbin.h"
 #include "stack.h"
-
 ArvNo* arv_criaNo(int c, ArvNo* esq, ArvNo* dir) {
 	ArvNo* p = (ArvNo*) malloc(sizeof(ArvNo));
 	p->info = c;
@@ -131,7 +129,7 @@ void printfArvPritty(ArvNo* raiz, int level) {
 	} else {
 		printfArvPritty(raiz->dir, level+1);
 		padding('\t', level);
-		printf("%c\n", raiz->info);
+		printf("%d\n", raiz->info);
 		printfArvPritty(raiz->esq, level+1);
 	}
 }
@@ -156,20 +154,42 @@ void espelho(ArvNo* r) {
 }
 
 void printInOrder(ArvNo* r) {
-	stack* pilha;
-	void (*freeFn)(stack*);
-	freeFn = &stack_destroy;
-	stack_new(pilha,sizeof(ArvNo*),(*freeFn)(pilha));
+	Pilha* pilha = pilha_cria();
 
-	while(stack_size(&pilha) > 0 || r != NULL) {
+	while(!pilha_vazia(pilha) || r != NULL) {
 		if (r != NULL) {
-			stack_push(&pilha,&r);
+			pilha_push(pilha,r);
 			r = r->esq;
 		}
 		else {
-			stack_pop(&pilha,&r);
+			r = pilha_pop(pilha);
 			printf("%d\n",r->info);
 			r = r->dir;
 		}
 	}
+	pilha_libera(pilha);
+}
+
+void printPosOrder(ArvNo* r) {
+	Pilha* p1 = pilha_cria();
+	Pilha* p2 = pilha_cria();
+	ArvNo* aux;
+	pilha_push(p1,r);
+	while(!pilha_vazia(p1)) {
+		aux = pilha_pop(p1);
+		pilha_push(p1,aux->esq);
+		pilha_push(p1,aux->dir);
+		pilha_push(p2,aux);
+
+	}
+	while(!pilha_vazia(p2)) {
+		aux = pilha_pop(p2);
+		printf("%d\n", aux->info);
+	}
+	pilha_libera(p1);
+	pilha_libera(p2);
+}
+
+void printPosOrder2(ArvNo* r) {
+
 }

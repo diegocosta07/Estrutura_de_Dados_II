@@ -17,7 +17,8 @@ int main() {
 	
 	printf("\n");
 	//largura(arvore->raiz);
-
+	printf("Arvone preorder\n");
+	imprime_No(arvore->raiz);
 	//QUESTAO 1
 	printf("QUESTAO 1\nQuantidade de nos da arvore %d\n",tamanho(arvore->raiz));
 
@@ -36,10 +37,22 @@ int main() {
 	printf("Maior valor da arvore eh %d\n",max);
 
 	//QUESTAO 5
+	printf("QUESTAO 5\n");
 	espelho(arvore->raiz);
 	printfArvPritty(arvore->raiz,0);
 
 	//QUESTAO 6
+	printf("QUESTAO 6\n");
+	espelho(arvore->raiz);//reverter o espelho
 	printInOrder(arvore->raiz);
+
+	//QUESTAO 7
+	printf("QUESTAO 7\n");
+	printPosOrder(arvore->raiz);
+
+	//QUESTAO 8
+	printf("QUESTAO 8\n");
+	printf("Não consegui fazer\n");
+
 	return 0;
 }

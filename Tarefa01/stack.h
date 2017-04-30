@@ -1,18 +1,17 @@
-#ifndef __STACK_H
-#define __STACK_H
+#include <stdlib.h>
+#include "arbin.h"
+struct lista{
+    ArvNo* info;
+    struct lista* prox;
+}; typedef struct lista Lista;
 
-// from previous post on linked-list implementation
-// in C
-#include "list.h"
- 
-typedef struct {
-  list *list;
-} stack;
- 
-void stack_new(stack *s, int elementSize, freeFunction freeFn);
-void stack_destroy(stack *s);
-void stack_push(stack *s, void *element);
-void stack_pop(stack *s, void *element);
-void stack_peek(stack *s, void *element);
-int stack_size(stack *s);
-#endif
+struct pilha{
+    Lista* prim;
+}; typedef struct pilha Pilha;
+
+Pilha* pilha_cria();
+void pilha_push(Pilha* p, ArvNo* v);
+ArvNo* pilha_pop(Pilha* p);
+int pilha_vazia(Pilha* p);
+void pilha_libera(Pilha* p);
+void pilha_imprime(Pilha* p);

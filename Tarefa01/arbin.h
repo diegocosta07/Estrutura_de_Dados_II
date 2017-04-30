@@ -22,3 +22,6 @@ void minmax(ArvNo* r, int* min, int* max);
 void padding(char ch, int n);
 void printfArvPritty(ArvNo* raiz, int level);
 void espelho(ArvNo* r);
+void printInOrder(ArvNo* r);
+void printPosOrder(ArvNo* r);
+void printPosOrder2(ArvNo* r);
